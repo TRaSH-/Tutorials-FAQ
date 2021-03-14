@@ -1,0 +1,3145 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Guides mainly for Sonarr/Radarr/Bazarr and everything related to it.">
+      
+      
+      
+        <meta name="author" content="TRaSH">
+      
+      
+        <link rel="canonical" href="https://trash-guides.info/Misc/how-to-set-up-hardlinks-and-atomic-moves/">
+      
+      <link rel="icon" href="../../img/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.0.6">
+    
+    
+      
+        <title>How To Set Up Hardlinks and Atomic-Moves - TRaSH Guides</title>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.2c0c5eaf.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.7fa14f5b.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#4051b5">
+        
+      
+    
+    <link rel="stylesheet" href="../../css/lightgallery.min.css">
+
+    
+    
+    <script src="../../js/lightgallery.min.js"></script>
+
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CFira+Code&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Fira Code"}</style>
+      
+    
+    
+      <link rel="manifest" href="../../manifest.webmanifest" crossorigin="use-credentials">
+    
+    
+      <link rel="stylesheet" href="../../css/timeago.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#how-to-set-up-hardlinks-and-atomic-moves" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="TRaSH Guides" class="md-header__button md-logo" aria-label="TRaSH Guides" data-md-component="logo">
+      
+  <img src="../../img/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TRaSH Guides
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              How To Set Up Hardlinks and Atomic-Moves
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="md-header__options">
+      
+    </div>
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/TRaSH-/Guides/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    TRaSH-/Guides
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../.." class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../Radarr/" class="md-tabs__link">
+        Radarr
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../Sonarr/" class="md-tabs__link">
+        Sonarr
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../Bazarr/" class="md-tabs__link">
+        Bazarr
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../Notifiarr/Quick-Start/" class="md-tabs__link">
+        Notifiarr
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../NZBGet/" class="md-tabs__link">
+        NZBGet
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../Plex/" class="md-tabs__link">
+        Plex
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link md-tabs__link--active">
+        Misc
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="TRaSH Guides" class="md-nav__button md-logo" aria-label="TRaSH Guides" data-md-component="logo">
+      
+  <img src="../../img/logo.png" alt="logo">
+
+    </a>
+    TRaSH Guides
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/TRaSH-/Guides/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    TRaSH-/Guides
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" data-md-state="indeterminate" type="checkbox" id="__nav_2" checked>
+      
+      <label class="md-nav__link" for="__nav_2">
+        Radarr
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Radarr" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Radarr
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Radarr/" class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2" data-md-state="indeterminate" type="checkbox" id="__nav_2_2" checked>
+      
+      <label class="md-nav__link" for="__nav_2_2">
+        V3
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="V3" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          V3
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Radarr/V3/Radarr-Quality-Settings-File-Size/" class="md-nav__link">
+        Quality Settings (File Size)
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Radarr/V3/Radarr-recommended-naming-scheme/" class="md-nav__link">
+        Recommended naming scheme
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Radarr/V3/Radarr-import-custom-formats/" class="md-nav__link">
+        How to import Custom Formats
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Radarr/V3/Radarr-setup-custom-formats/" class="md-nav__link">
+        How to setup Custom Formats
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Radarr/V3/Radarr-collection-of-custom-formats/" class="md-nav__link">
+        Collection of Custom Formats
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Radarr/V3/Radarr-remote-path-mapping/" class="md-nav__link">
+        Remote Path Mappings explained
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_7" data-md-state="indeterminate" type="checkbox" id="__nav_2_2_7" checked>
+      
+      <label class="md-nav__link" for="__nav_2_2_7">
+        Tips
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Tips" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_2_7">
+          <span class="md-nav__icon md-icon"></span>
+          Tips
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Radarr/V3/Tips/Radarr-add-a-movie-collection/" class="md-nav__link">
+        How to add a Movie Collection
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Radarr/V3/Tips/Radarr-rename-your-folders/" class="md-nav__link">
+        How to rename your folders
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Radarr/V3/Tips/Radarr-show-unknown-movie-items/" class="md-nav__link">
+        Show Unknown Movie Items
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" data-md-state="indeterminate" type="checkbox" id="__nav_3" checked>
+      
+      <label class="md-nav__link" for="__nav_3">
+        Sonarr
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Sonarr" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Sonarr
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Sonarr/" class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" data-md-state="indeterminate" type="checkbox" id="__nav_3_2" checked>
+      
+      <label class="md-nav__link" for="__nav_3_2">
+        V3
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="V3" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          V3
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Sonarr/V3/Sonarr-Quality-Settings-File-Size/" class="md-nav__link">
+        Quality Settings (File Size)
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Sonarr/V3/Sonarr-recommended-naming-scheme/" class="md-nav__link">
+        Recommended naming scheme
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Sonarr/V3/Sonarr-Release-Profile-RegEx/" class="md-nav__link">
+        Release Profile RegEx (WEB-DL)
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Sonarr/V3/Sonarr-Release-Profile-RegEx-Anime/" class="md-nav__link">
+        Release Profile RegEx (Anime)
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Sonarr/V3/Sonarr-remote-path-mapping/" class="md-nav__link">
+        Remote Path Mappings explained
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" data-md-state="indeterminate" type="checkbox" id="__nav_4" checked>
+      
+      <label class="md-nav__link" for="__nav_4">
+        Bazarr
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Bazarr" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Bazarr
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Bazarr/" class="md-nav__link">
+        Bazarr
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" data-md-state="indeterminate" type="checkbox" id="__nav_4_2" checked>
+      
+      <label class="md-nav__link" for="__nav_4_2">
+        Scripts
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Scripts" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          Scripts
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Bazarr/scripts/" class="md-nav__link">
+        Scripts you can use with Bazarr
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2_2" data-md-state="indeterminate" type="checkbox" id="__nav_4_2_2" checked>
+      
+      <label class="md-nav__link" for="__nav_4_2_2">
+        2to3 language code
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="2to3 language code" data-md-level="3">
+        <label class="md-nav__title" for="__nav_4_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          2to3 language code
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Bazarr/scripts/2to3-language-code/" class="md-nav__link">
+        2to3-language-code
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" data-md-state="indeterminate" type="checkbox" id="__nav_5" checked>
+      
+      <label class="md-nav__link" for="__nav_5">
+        Notifiarr
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Notifiarr" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Notifiarr
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Notifiarr/Quick-Start/" class="md-nav__link">
+        Quick Start
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Notifiarr/Discord-Permissions/" class="md-nav__link">
+        Discord Permissions
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" data-md-state="indeterminate" type="checkbox" id="__nav_5_3" checked>
+      
+      <label class="md-nav__link" for="__nav_5_3">
+        Integrations Setup
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Integrations Setup" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_3">
+          <span class="md-nav__icon md-icon"></span>
+          Integrations Setup
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Notifiarr/Integrations-Setup/Bazarr/" class="md-nav__link">
+        Bazarr Integration
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Notifiarr/Integrations-Setup/Better-Uptime/" class="md-nav__link">
+        Better Uptime Integration
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Notifiarr/Integrations-Setup/Lidarr/" class="md-nav__link">
+        Lidarr Integration
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Notifiarr/Integrations-Setup/Plex/" class="md-nav__link">
+        Plex Integration
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Notifiarr/Integrations-Setup/Radarr/" class="md-nav__link">
+        Radarr Integration
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Notifiarr/Integrations-Setup/Snapshots/" class="md-nav__link">
+        Snapshots Integration
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_4" data-md-state="indeterminate" type="checkbox" id="__nav_5_4" checked>
+      
+      <label class="md-nav__link" for="__nav_5_4">
+        Media Requests
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Media Requests" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_4">
+          <span class="md-nav__icon md-icon"></span>
+          Media Requests
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Notifiarr/Media-Requests/Notifiarr-Client/" class="md-nav__link">
+        Notifiarr Client
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Notifiarr/Media-Requests/setup-stuff/" class="md-nav__link">
+        setup stuff
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_5" data-md-state="indeterminate" type="checkbox" id="__nav_5_5" checked>
+      
+      <label class="md-nav__link" for="__nav_5_5">
+        Notification History
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Notification History" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_5">
+          <span class="md-nav__icon md-icon"></span>
+          Notification History
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Notifiarr/Notification-History/" class="md-nav__link">
+        placeholder
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_6" data-md-state="indeterminate" type="checkbox" id="__nav_5_6" checked>
+      
+      <label class="md-nav__link" for="__nav_5_6">
+        Transcode History
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Transcode History" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_6">
+          <span class="md-nav__icon md-icon"></span>
+          Transcode History
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Notifiarr/Transcode-History/" class="md-nav__link">
+        placeholder
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_7" data-md-state="indeterminate" type="checkbox" id="__nav_5_7" checked>
+      
+      <label class="md-nav__link" for="__nav_5_7">
+        Trending
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Trending" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_7">
+          <span class="md-nav__icon md-icon"></span>
+          Trending
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Notifiarr/Trending/" class="md-nav__link">
+        placeholder
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_8" data-md-state="indeterminate" type="checkbox" id="__nav_5_8" checked>
+      
+      <label class="md-nav__link" for="__nav_5_8">
+        Translations
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Translations" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_8">
+          <span class="md-nav__icon md-icon"></span>
+          Translations
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Notifiarr/Translations/" class="md-nav__link">
+        placeholder
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" data-md-state="indeterminate" type="checkbox" id="__nav_6" checked>
+      
+      <label class="md-nav__link" for="__nav_6">
+        NZBGet
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="NZBGet" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          NZBGet
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NZBGet/" class="md-nav__link">
+        NZBGet
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NZBGet/How-to-setup-NZBGet/" class="md-nav__link">
+        Setup NZBGet to use with Sonarr/Radarr
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_3" data-md-state="indeterminate" type="checkbox" id="__nav_6_3" checked>
+      
+      <label class="md-nav__link" for="__nav_6_3">
+        Scripts
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Scripts" data-md-level="2">
+        <label class="md-nav__title" for="__nav_6_3">
+          <span class="md-nav__icon md-icon"></span>
+          Scripts
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NZBGet/scripts/" class="md-nav__link">
+        Scripts you can use with NZBGet
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_3_2" data-md-state="indeterminate" type="checkbox" id="__nav_6_3_2" checked>
+      
+      <label class="md-nav__link" for="__nav_6_3_2">
+        Clean
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Clean" data-md-level="3">
+        <label class="md-nav__title" for="__nav_6_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Clean
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NZBGet/scripts/Clean/" class="md-nav__link">
+        Clean
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_3_3" data-md-state="indeterminate" type="checkbox" id="__nav_6_3_3" checked>
+      
+      <label class="md-nav__link" for="__nav_6_3_3">
+        HashRenamer
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="HashRenamer" data-md-level="3">
+        <label class="md-nav__title" for="__nav_6_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          HashRenamer
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NZBGet/scripts/HashRenamer/" class="md-nav__link">
+        HashRenamer
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_3_4" data-md-state="indeterminate" type="checkbox" id="__nav_6_3_4" checked>
+      
+      <label class="md-nav__link" for="__nav_6_3_4">
+        WtFnZb Renamer
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="WtFnZb Renamer" data-md-level="3">
+        <label class="md-nav__title" for="__nav_6_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          WtFnZb Renamer
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NZBGet/scripts/WtFnZb-Renamer/" class="md-nav__link">
+        WtFnZb-Renamer
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" data-md-state="indeterminate" type="checkbox" id="__nav_7" checked>
+      
+      <label class="md-nav__link" for="__nav_7">
+        Plex
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Plex" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Plex
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Plex/" class="md-nav__link">
+        Plex
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7_2" data-md-state="indeterminate" type="checkbox" id="__nav_7_2" checked>
+      
+      <label class="md-nav__link" for="__nav_7_2">
+        Profiles
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Profiles" data-md-level="2">
+        <label class="md-nav__title" for="__nav_7_2">
+          <span class="md-nav__icon md-icon"></span>
+          Profiles
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Plex/Profiles/" class="md-nav__link">
+        Here you will find a collection of Profile's for Plex
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" checked>
+      
+      <label class="md-nav__link" for="__nav_8">
+        Misc
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Misc" data-md-level="1">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Misc
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to-provide-a-docker-compose/" class="md-nav__link">
+        How to provide a docker compose
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          How To Set Up Hardlinks and Atomic-Moves
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        How To Set Up Hardlinks and Atomic-Moves
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    Description
+  </a>
+  
+    <nav class="md-nav" aria-label="Description">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#faq" class="md-nav__link">
+    FAQ
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-setup-for" class="md-nav__link">
+    How to Setup for
+  </a>
+  
+    <nav class="md-nav" aria-label="How to Setup for">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dockstarter" class="md-nav__link">
+    DockSTARTer
+  </a>
+  
+    <nav class="md-nav" aria-label="DockSTARTer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#folder-structure" class="md-nav__link">
+    Folder Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changes-to-the-env" class="md-nav__link">
+    Changes to the .env
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changes-to-your-paths" class="md-nav__link">
+    Changes to your paths
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dockstarter-examples" class="md-nav__link">
+    DockSTARTer Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unraid" class="md-nav__link">
+    UnRaid
+  </a>
+  
+    <nav class="md-nav" aria-label="UnRaid">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-the-main-share" class="md-nav__link">
+    Create the main share
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#folder-structure_1" class="md-nav__link">
+    Folder Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-the-containers" class="md-nav__link">
+    Setting up the containers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#torrent-clients" class="md-nav__link">
+    Torrent clients
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usenet-clients" class="md-nav__link">
+    Usenet clients
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-arrs" class="md-nav__link">
+    The arr(s)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#media-server" class="md-nav__link">
+    Media Server
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#final-result" class="md-nav__link">
+    Final Result
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#synology" class="md-nav__link">
+    Synology
+  </a>
+  
+    <nav class="md-nav" aria-label="Synology">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#puid-and-pgid" class="md-nav__link">
+    PUID and PGID
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#folder-structure_2" class="md-nav__link">
+    Folder Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breakdown-of-the-folder-structure" class="md-nav__link">
+    Breakdown of the Folder Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appdata" class="md-nav__link">
+    Appdata
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#needed-files" class="md-nav__link">
+    Needed files
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changes-you-need-to-do" class="md-nav__link">
+    Changes you need to do
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permissions" class="md-nav__link">
+    Permissions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-the-docker-compose" class="md-nav__link">
+    Run the Docker Compose
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker" class="md-nav__link">
+    Docker
+  </a>
+  
+    <nav class="md-nav" aria-label="Docker">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#folder-structure_3" class="md-nav__link">
+    Folder Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breakdown-of-the-folder-structure_1" class="md-nav__link">
+    Breakdown of the Folder Structure
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#native" class="md-nav__link">
+    Native
+  </a>
+  
+    <nav class="md-nav" aria-label="Native">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#folder-structure_4" class="md-nav__link">
+    Folder Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breakdown-of-the-folder-structure_2" class="md-nav__link">
+    Breakdown of the Folder Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permissions_1" class="md-nav__link">
+    Permissions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sonarr_1" class="md-nav__link">
+    Sonarr
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#radarr_1" class="md-nav__link">
+    Radarr
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sabnzbd_1" class="md-nav__link">
+    SABnzbd
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nzbget_1" class="md-nav__link">
+    NZBGet
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qbittorrent_1" class="md-nav__link">
+    qBittorrent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deluge_1" class="md-nav__link">
+    Deluge
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rutorrent_1" class="md-nav__link">
+    ruTorrent
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../How-to-setup-Torguard-for-port-forwarding/" class="md-nav__link">
+        Setup TorGuard for port forwarding
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../x265-4k/" class="md-nav__link">
+        x265-4k and Golden Rule
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    Description
+  </a>
+  
+    <nav class="md-nav" aria-label="Description">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#faq" class="md-nav__link">
+    FAQ
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-setup-for" class="md-nav__link">
+    How to Setup for
+  </a>
+  
+    <nav class="md-nav" aria-label="How to Setup for">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dockstarter" class="md-nav__link">
+    DockSTARTer
+  </a>
+  
+    <nav class="md-nav" aria-label="DockSTARTer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#folder-structure" class="md-nav__link">
+    Folder Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changes-to-the-env" class="md-nav__link">
+    Changes to the .env
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changes-to-your-paths" class="md-nav__link">
+    Changes to your paths
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dockstarter-examples" class="md-nav__link">
+    DockSTARTer Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unraid" class="md-nav__link">
+    UnRaid
+  </a>
+  
+    <nav class="md-nav" aria-label="UnRaid">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-the-main-share" class="md-nav__link">
+    Create the main share
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#folder-structure_1" class="md-nav__link">
+    Folder Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-the-containers" class="md-nav__link">
+    Setting up the containers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#torrent-clients" class="md-nav__link">
+    Torrent clients
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usenet-clients" class="md-nav__link">
+    Usenet clients
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-arrs" class="md-nav__link">
+    The arr(s)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#media-server" class="md-nav__link">
+    Media Server
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#final-result" class="md-nav__link">
+    Final Result
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#synology" class="md-nav__link">
+    Synology
+  </a>
+  
+    <nav class="md-nav" aria-label="Synology">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#puid-and-pgid" class="md-nav__link">
+    PUID and PGID
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#folder-structure_2" class="md-nav__link">
+    Folder Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breakdown-of-the-folder-structure" class="md-nav__link">
+    Breakdown of the Folder Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appdata" class="md-nav__link">
+    Appdata
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#needed-files" class="md-nav__link">
+    Needed files
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changes-you-need-to-do" class="md-nav__link">
+    Changes you need to do
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permissions" class="md-nav__link">
+    Permissions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-the-docker-compose" class="md-nav__link">
+    Run the Docker Compose
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker" class="md-nav__link">
+    Docker
+  </a>
+  
+    <nav class="md-nav" aria-label="Docker">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#folder-structure_3" class="md-nav__link">
+    Folder Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breakdown-of-the-folder-structure_1" class="md-nav__link">
+    Breakdown of the Folder Structure
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#native" class="md-nav__link">
+    Native
+  </a>
+  
+    <nav class="md-nav" aria-label="Native">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#folder-structure_4" class="md-nav__link">
+    Folder Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breakdown-of-the-folder-structure_2" class="md-nav__link">
+    Breakdown of the Folder Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permissions_1" class="md-nav__link">
+    Permissions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sonarr_1" class="md-nav__link">
+    Sonarr
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#radarr_1" class="md-nav__link">
+    Radarr
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sabnzbd_1" class="md-nav__link">
+    SABnzbd
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nzbget_1" class="md-nav__link">
+    NZBGet
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qbittorrent_1" class="md-nav__link">
+    qBittorrent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deluge_1" class="md-nav__link">
+    Deluge
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rutorrent_1" class="md-nav__link">
+    ruTorrent
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+    
+                
+                  <a href="https://github.com/TRaSH-/Guides/edit/master/docs/Misc/how-to-set-up-hardlinks-and-atomic-moves.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="how-to-set-up-hardlinks-and-atomic-moves">How To Set Up Hardlinks and Atomic-Moves<a class="headerlink" href="#how-to-set-up-hardlinks-and-atomic-moves" title="Permanent link">&para;</a></h1>
+<h2 id="description">Description<a class="headerlink" href="#description" title="Permanent link">&para;</a></h2>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>If you’re wondering why hard links aren’t working or why a simple move is taking far longer than it should.</p>
+<p>Here we will try to explains it.</p>
+<p>The paths you use on the inside matter. Because of how Docker’s volumes work, passing in two or three volumes such as the commonly suggested <code>/tv</code>, <code>/movies</code> and <code>/downloads</code> makes them look like two or three file systems, even if they aren’t. This means hard links won’t work and instead of an instant move, a slower and more I/O intensive copy + delete is used.</p>
+</div>
+<p>So you want one of the following ?</p>
+<ul>
+<li>Instant moves (Atomic-Moves) during import of the *arr (useful when using Usenet)?</li>
+<li>You don't want to use twice the storage when using torrents. (hardlinks)?</li>
+<li>You want to perma seed?</li>
+</ul>
+<p>Then keep reading.</p>
+<details class="faq"><summary>FAQ</summary><h3 id="faq">FAQ<a class="headerlink" href="#faq" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Q: <strong>What are the <code>*arr</code>?</strong></p>
+<ul>
+<li>Sonarr, Radarr, Lidarr, etc.</li>
+</ul>
+</li>
+<li>
+<p>Q: <strong>What are hardlinks?</strong></p>
+<ul>
+<li>Short answer is "having a file in multiple folders" without using up your storage, <a href="https://medium.com/@krisbredemeier/the-difference-between-hard-links-and-soft-or-symbolic-links-780149244f7d" rel="noopener noreferrer" target="_blank">Long Answer</a>.</li>
+</ul>
+</li>
+<li>
+<p>Q: <strong>What's Atomic Moves?</strong></p>
+<ul>
+<li>A real move and not a copy file from download folder to media folder and then delete file from download folder.</li>
+</ul>
+</li>
+</ol>
+</details>
+<hr />
+<h3 id="how-to-setup-for">How to Setup for<a class="headerlink" href="#how-to-setup-for" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="#dockstarter">DockSTARTer</a></li>
+<li><a href="#unraid">UnRaid</a></li>
+<li><a href="#synology">Synology</a></li>
+<li><a href="#docker">Docker</a></li>
+<li><a href="#native">Bare Metal (Native)</a></li>
+</ul>
+<details class="summary"><summary>DockSTARTer</summary><h4 id="dockstarter">DockSTARTer<a class="headerlink" href="#dockstarter" title="Permanent link">&para;</a></h4>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>I'm using the default paths in this example, and will keep the other paths unchanged so nothing will break if you make a mistake.</p>
+</div>
+<h5 id="folder-structure">Folder Structure<a class="headerlink" href="#folder-structure" title="Permanent link">&para;</a></h5>
+<p>We're going to use a mounted drive that we're going to use as storage for downloads and your media.
+In this example the mounted drive will be mounted to <code>/mnt/</code> with the following folder structure.</p>
+<div class="highlight"><pre><span></span><code>storage
+├── downloads
+|  ├── torrents
+│  |  ├── movies
+│  |  ├── music
+│  |  └── tv
+|  └── usenet
+│     ├── movies
+│     ├── music
+│     └── tv
+└── medialibrary
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<h5 id="changes-to-the-env">Changes to the .env<a class="headerlink" href="#changes-to-the-env" title="Permanent link">&para;</a></h5>
+<p>To accomplish this we need to change first a few paths in your <code>.env</code> (Usually <code>~/.docker/compose/.env</code>)</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Global Settings</span>
+<span class="l l-Scalar l-Scalar-Plain">COMPOSE_HTTP_TIMEOUT=60</span>
+<span class="l l-Scalar l-Scalar-Plain">DOCKERCONFDIR=~/.config/appdata</span>
+<span class="l l-Scalar l-Scalar-Plain">DOCKERGID=999</span>
+<span class="l l-Scalar l-Scalar-Plain">DOCKERHOSTNAME=DockSTARTer</span>
+<span class="l l-Scalar l-Scalar-Plain">DOCKERLOGGING_MAXFILE=10</span>
+<span class="l l-Scalar l-Scalar-Plain">DOCKERLOGGING_MAXSIZE=200k</span>
+<span class="l l-Scalar l-Scalar-Plain">DOCKERSTORAGEDIR=/mnt/storage</span>
+<span class="l l-Scalar l-Scalar-Plain">PGID=1000</span>
+<span class="l l-Scalar l-Scalar-Plain">PUID=1000</span>
+<span class="l l-Scalar l-Scalar-Plain">TZ=America/Chicago</span>
+
+<span class="l l-Scalar l-Scalar-Plain"># DEPRECATED Settings (will be removed at the end of 2020)</span>
+<span class="l l-Scalar l-Scalar-Plain">DOCKERSHAREDDIR=~/shared</span>
+<span class="l l-Scalar l-Scalar-Plain">DOWNLOADSDIR=/mnt/downloads</span>
+<span class="l l-Scalar l-Scalar-Plain">MEDIADIR_AUDIOBOOKS=/mnt/medialibrary/audiobooks</span>
+<span class="l l-Scalar l-Scalar-Plain">MEDIADIR_BOOKS=/mnt/medialibrary/books</span>
+<span class="l l-Scalar l-Scalar-Plain">MEDIADIR_COMICS=/mnt/medialibrary/comics</span>
+<span class="l l-Scalar l-Scalar-Plain">MEDIADIR_MOVIES=/mnt/medialibrary/movies</span>
+<span class="l l-Scalar l-Scalar-Plain">MEDIADIR_MUSIC=/mnt/medialibrary/music</span>
+<span class="l l-Scalar l-Scalar-Plain">MEDIADIR_TV=/mnt/medialibrary/tv</span>
+</code></pre></div>
+<h5 id="changes-to-your-paths">Changes to your paths<a class="headerlink" href="#changes-to-your-paths" title="Permanent link">&para;</a></h5>
+<p>When that's all set then you will need to change the paths you're going to use in the containers from:</p>
+<p><code>/downloads</code> =&gt; <code>/storage/downloads</code></p>
+<p><code>/audiobooks</code> =&gt; <code>/storage/medialibrary/audiobooks</code></p>
+<p><code>/books</code> =&gt; <code>/storage/medialibrary/books</code></p>
+<p><code>/comics</code>  =&gt; <code>/storage/medialibrary/comics</code></p>
+<p><code>/movies</code> =&gt; <code>/storage/medialibrary/movies</code></p>
+<p><code>/music</code> =&gt; <code>/storage/medialibrary/music</code></p>
+<p><code>/tv</code> =&gt; <code>/storage/medialibrary/tv</code></p>
+<h5 id="dockstarter-examples">DockSTARTer Examples<a class="headerlink" href="#dockstarter-examples" title="Permanent link">&para;</a></h5>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The screenshots in the examples are using the following root path <code>/storage</code></p>
+</div>
+<details class="example"><summary>Sonarr Examples</summary><h6 id="sonarr">Sonarr<a class="headerlink" href="#sonarr" title="Permanent link">&para;</a></h6>
+<p><code>Settings</code> =&gt; <code>Media Management</code> =&gt; <code>Importing</code></p>
+<p><img alt="sonarr-enable-hardlinks" src="../images/sonarr-enable-hardlinks.png" /></p>
+<p><code>Settings</code> =&gt; <code>Media Management</code> =&gt; <code>Root Folders</code></p>
+<p><img alt="ds-sonarr-root-folder" src="../images/ds-sonarr-root-folder.png" /></p>
+<p><code>Series</code> =&gt; <code>Add New</code></p>
+<p><img alt="ds-sonarr-add-new" src="../images/ds-sonarr-add-new.png" /></p>
+<p><img alt="ds-sonarr-tv" src="../images/ds-sonarr-tv.png" /></p>
+</details>
+<details class="example"><summary>Radarr Examples</summary><h6 id="radarr">Radarr<a class="headerlink" href="#radarr" title="Permanent link">&para;</a></h6>
+<p><code>Settings</code> =&gt; <code>Media Management</code> =&gt; <code>Importing</code></p>
+<p><img alt="radarr-enable-hardlinks" src="../images/radarr-enable-hardlinks.png" /></p>
+<p><code>Settings</code> =&gt; <code>Media Management</code> =&gt; <code>Root Folders</code></p>
+<p><img alt="ds-radarr-root-folder" src="../images/ds-radarr-root-folder.png" /></p>
+<p><code>Movies</code> =&gt; <code>Add New</code></p>
+<p><img alt="ds-radarr-add-new" src="../images/ds-radarr-add-new.png" /></p>
+<p><img alt="ds-radarr-movies" src="../images/ds-radarr-movies.png" /></p>
+</details>
+<details class="example"><summary>SABnzbd Examples</summary><h6 id="sabnzbd">SABnzbd<a class="headerlink" href="#sabnzbd" title="Permanent link">&para;</a></h6>
+<p><code>SABnzbd config</code> =&gt; <code>Folders</code></p>
+<p><img alt="ds-sabnzbd-folders" src="../images/ds-sabnzbd-folders.png" /></p>
+<p><code>SABnzbd config</code> =&gt; <code>Categories</code></p>
+<p><img alt="ds-sabnzbd-categories" src="../images/ds-sabnzbd-categories.png" /></p>
+</details>
+<details class="example"><summary>NZBGet Examples</summary><h6 id="nzbget">NZBGet<a class="headerlink" href="#nzbget" title="Permanent link">&para;</a></h6>
+<p><code>Settings</code> =&gt; <code>PATHS</code></p>
+<p><img alt="ds-nzbget-settings-paths" src="../images/ds-nzbget-settings-paths.png" /></p>
+<p><code>Settings</code> =&gt; <code>CATEGORIES</code></p>
+<p><img alt="ds-nzbget-settings-categories" src="../images/ds-nzbget-settings-categories.png" /></p>
+</details>
+<details class="example"><summary>qBittorrent Examples</summary><h6 id="qbittorrent">qBittorrent<a class="headerlink" href="#qbittorrent" title="Permanent link">&para;</a></h6>
+<p><code>Options</code> =&gt; <code>Downloads</code></p>
+<p><img alt="ds-qbt-options-downloads" src="../images/ds-qbt-options-downloads.png" /></p>
+</details>
+<details class="example"><summary>Deluge Example</summary><h6 id="deluge">Deluge<a class="headerlink" href="#deluge" title="Permanent link">&para;</a></h6>
+<p><code>Preferences</code> =&gt; <code>Downloads</code></p>
+<p><img alt="ds-deluge-preferences-downloads" src="../images/ds-deluge-preferences-downloads.png" /></p>
+</details>
+<details class="example"><summary>ruTorrent Examples</summary><h6 id="rutorrent">ruTorrent<a class="headerlink" href="#rutorrent" title="Permanent link">&para;</a></h6>
+<p><code>../config/rtorrent/config/rtorrent.rc</code> (path to your appdata)</p>
+<p><img alt="ds-rtorrent.rc" src="../images/ds-rtorrent.rc.png" /></p>
+<p><code>Settings</code> =&gt; <code>Downloads</code></p>
+<p><img alt="ds-rtorrent-settings-downloads" src="../images/ds-rtorrent-settings-downloads.png" /></p>
+<p><code>Settings</code> =&gt; <code>Autotools</code></p>
+<p><img alt="ds-rtorrent-settings-autotools" src="../images/ds-rtorrent-settings-autotools.png" /></p>
+</details>
+</details>
+<details class="summary"><summary>UnRaid</summary><h4 id="unraid">UnRaid<a class="headerlink" href="#unraid" title="Permanent link">&para;</a></h4>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The first thing you need to do is forget the suggested paths from the Spaceinvader One YouTube Tutorials,</p>
+<p>and don't use the predefined paths from the unraid templates.</p>
+<p>(Spaceinvader One YouTube guides are great to learn how to start with unraid or how to setup certain applications, and yes I did and still do use them. Probably the main reason why he's using those path is because they are predefined in the template)</p>
+</div>
+<hr />
+<h5 id="create-the-main-share">Create the main share<a class="headerlink" href="#create-the-main-share" title="Permanent link">&para;</a></h5>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>To get Hardlinks and Atomic-Moves working with Unraid you will need to make use of <strong>ONE</strong> share with subfolders.</p>
+</div>
+<p>For this example I'm using my own setup and preferred share <code>data</code>.</p>
+<p>Go to your dashboard and on the top select <code>shares</code> select <code>add share</code> .</p>
+<p><div class="lightgallery"><a data-sub-html="unraid-main-share" href="../images/unraid-main-share.png"><img alt="unraid-main-share" src="../images/unraid-main-share.png" /></a></div></p>
+<ol>
+<li>use <code>data</code></li>
+<li>if you got a cache drive and want to make use of it put it on <code>Yes</code> or keep it disabled (Hardlinks will stay in tact if you're using the cache)</li>
+<li>click on <code>ADD SHARE</code></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Keep in mind regarding the use of the Cache drive, The mover can't move files that are in use, like  when seeding with torrents. You will need to shutdown your client or stop/pause the torrents so the mover can move them to your Array.</p>
+<p>With Usenet  you won't have any issues.</p>
+</div>
+<hr />
+<h5 id="folder-structure_1">Folder Structure<a class="headerlink" href="#folder-structure_1" title="Permanent link">&para;</a></h5>
+<p>On the host (Unraid) you will need to add <code>/mnt/user</code> before it. <strong>So <code>/mnt/user/data</code></strong></p>
+<p>The <code>data</code> folder has sub-folders for <code>torrents</code> and <code>usenet</code> and each of these have sub-folders for <code>tv</code>, <code>movie</code> and <code>music</code> downloads to keep things neat. The <code>media</code> folder has nicely named <code>TV</code>, <code>Movies</code> and <code>Music</code> sub-folders, this is your library and what you’d pass to Plex, Emby or JellyFin.</p>
+<p>These subfolders you need to create your self, you can use krusader or winscp to create them or any other way you prefer.</p>
+<div class="highlight"><pre><span></span><code>data
+├── torrents
+│  ├── movies
+│  ├── music
+│  └── tv
+├── usenet
+│  ├── movies
+│  ├── music
+│  └── tv
+└── media
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<p><em>I'm using lower case on all folder on  purpose, being Linux is case sensitive.</em></p>
+<hr />
+<h5 id="setting-up-the-containers">Setting up the containers<a class="headerlink" href="#setting-up-the-containers" title="Permanent link">&para;</a></h5>
+<p>After you created all the needed folders it's time to setup the paths in the docker containers.</p>
+<p>Go to your dashboard and select your docker container you want to edit or if you're starting fresh add the docker containers you want to use or prefer.</p>
+<p>Unraid makes it actually  pretty clear what's the Host Path and what's the Container Path.</p>
+<p><code>Container Path:</code> =&gt; The path that will be used inside the container.</p>
+<p><code>Host Path:</code> =&gt; The path on your Unraid Server (The Host).</p>
+<hr />
+<h5 id="torrent-clients">Torrent clients<a class="headerlink" href="#torrent-clients" title="Permanent link">&para;</a></h5>
+<p>qBittorrent, Deluge, ruTorrent</p>
+<p><img alt="unraid-torrent-clients" src="../images/unraid-torrent-clients.png" /></p>
+<p><code>Container Path:</code> =&gt; <code>/data/torrents/</code></p>
+<p><code>Host Path:</code> =&gt; <code>/mnt/user/data/torrents/</code></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The reason why we use <code>/data/torrents/</code> for the torrent client is because it only needs access to the torrent files. In the torrent software settings, you’ll need to reconfigure paths and you can sort into sub-folders like <code>/data/torrents/{tv|movies|music}</code>.</p>
+</div>
+<div class="highlight"><pre><span></span><code>data
+└── torrents
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<hr />
+<h5 id="usenet-clients">Usenet clients<a class="headerlink" href="#usenet-clients" title="Permanent link">&para;</a></h5>
+<p>NZBGet or SABnzbd</p>
+<p><img alt="unraid-usenet-client" src="../images/unraid-usenet-client.png" /></p>
+<p><code>Container Path:</code> =&gt; <code>/data/usenet/</code></p>
+<p><code>Host Path:</code> =&gt; <code>/mnt/user/data/usenet/</code></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The reason why we use <code>/data/usenet/</code> for the usenet client is because it only needs access to the usenet files. In the usenet software settings, you’ll need to reconfigure paths and you can sort into sub-folders like <code>/data/usenet/{tv|movies|music}</code>.</p>
+</div>
+<div class="highlight"><pre><span></span><code>data
+└── usenet
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<hr />
+<h5 id="the-arrs">The arr(s)<a class="headerlink" href="#the-arrs" title="Permanent link">&para;</a></h5>
+<p>Sonarr, Radarr and Lidarr</p>
+<p><img alt="unraid-arr" src="../images/unraid-arr.png" /></p>
+<p><code>Container Path:</code> =&gt; <code>/data</code></p>
+<p><code>Host Path:</code> =&gt; <code>/mnt/user/data/</code></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Sonarr, Radarr and Lidarr gets access to everything because the download folder(s) and media folder will look like and be one file system. Hard links will work and moves will be atomic, instead of copy + delete.</p>
+</div>
+<div class="highlight"><pre><span></span><code>data
+├── torrents
+│  ├── movies
+│  ├── music
+│  └── tv
+├── usenet
+│  ├── movies
+│  ├── music
+│  └── tv
+└── media
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<hr />
+<h5 id="media-server">Media Server<a class="headerlink" href="#media-server" title="Permanent link">&para;</a></h5>
+<p>Plex, Emby, JellyFin and Bazarr</p>
+<p><img alt="unraid-media-server" src="../images/unraid-media-server.png" /></p>
+<p><code>Container Path:</code> =&gt; <code>/data/media</code></p>
+<p><code>Host Path:</code> =&gt; <code>/mnt/user/data/media/</code></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Plex, Emby, JellyFin and Bazarr only needs access to your media library, which can have any number of sub folders like Movies, Kids Movies, TV, Documentary TV and/or Music as sub folders.</p>
+</div>
+<div class="highlight"><pre><span></span><code>data
+└── media
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<hr />
+<h5 id="final-result">Final Result<a class="headerlink" href="#final-result" title="Permanent link">&para;</a></h5>
+<p><div class="lightgallery"><a data-sub-html="unraid-final-result" href="../images/unraid-final-result.png"><img alt="unraid-final-result" src="../images/unraid-final-result.png" /></a></div></p>
+<p><strong>Don't forget to look at the <a href="#examples">Examples</a> how to setup the paths inside the containers.</strong></p>
+</details>
+<details class="summary"><summary>Synology</summary><h4 id="synology">Synology<a class="headerlink" href="#synology" title="Permanent link">&para;</a></h4>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Being I don't have a Synology myself and I kind of hate the Synology GUI for the dockers, I'm doing this with the use of docker-compose.</p>
+<p>This works like 10x faster then the GUI and after adding it shows up in the GUI.</p>
+<p>Thnx to faxity for the initial compose that I used to create the Synology Guide.</p>
+</div>
+<p>We need to get some information that we need later to setup the docker-compose file.</p>
+<h5 id="puid-and-pgid">PUID and PGID<a class="headerlink" href="#puid-and-pgid" title="Permanent link">&para;</a></h5>
+<p>In order for the Docker container to access the shares on the Synology,
+we need to give it the same permissions as your main user who has access to those shares.
+For this we need to figure out the PUID and the PGID of the user having access to your shares.</p>
+<p>You will need to SSH into your Synology.
+If you didn't already enable it you need to do that first</p>
+<p><div class="lightgallery"><a data-sub-html="synology-control-panel" href="../images/synology-control-panel.png"><img alt="synology-control-panel" src="../images/synology-control-panel.png" /></a></div></p>
+<p>Then use a program like Putty and SSH to your Synology.</p>
+<p>Login if you get a popup asking if you want to trust the key,
+Just press <code>OK</code> or <code>ACCEPT</code></p>
+<p>Enter the login information of your main Synology user account.</p>
+<p><div class="lightgallery"><a data-sub-html="synology-id" href="../images/synology-id.png"><img alt="synology-id" src="../images/synology-id.png" /></a></div></p>
+<p>Once logged in type <code>id</code>.
+This will show your UID (aka PUID).
+Which in this screenshot is <code>1026</code> for the administrator
+and the GID (aka PGID) which is <code>100</code> for the users group.
+Remember these values for later use.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Yes we know it's not recommended to use the admin account but if you already know this then you wouldn't need to read this ;)</p>
+</div>
+<hr />
+<h5 id="folder-structure_2">Folder Structure<a class="headerlink" href="#folder-structure_2" title="Permanent link">&para;</a></h5>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>To get Hardlinks and Atomic-Moves working with your Synology you will need to make use of <strong>ONE</strong> share with subfolders.</p>
+</div>
+<p>For this example we're going to make use of a share called <code>data</code>.</p>
+<p>On the host (Synology) you will need to add <code>/volume1/</code> before it. So <code>/volume1/data</code></p>
+<p>The <code>data</code> folder has sub-folders for <code>torrents</code> and <code>usenet</code> and each of these have sub-folders for <code>tv</code>, <code>movie</code> and <code>music</code> downloads to keep things neat. The <code>media</code> folder has nicely named <code>TV</code>, <code>Movies</code> and <code>Music</code> sub-folders, this is your library and what you’d pass to Plex, Emby or JellyFin.</p>
+<p>These subfolders you need to create your self.</p>
+<p><em>I'm using lower case on all folder on  purpose, being Linux is case sensitive.</em></p>
+<div class="highlight"><pre><span></span><code>data
+├── torrents
+│  ├── movies
+│  ├── music
+│  └── tv
+├── usenet
+│  ├── movies
+│  ├── music
+│  └── tv
+└── media
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<details class="summary"><summary>Breakdown of the Folder Structure</summary><h5 id="breakdown-of-the-folder-structure">Breakdown of the Folder Structure<a class="headerlink" href="#breakdown-of-the-folder-structure" title="Permanent link">&para;</a></h5>
+<h6 id="torrent-clients_1">Torrent clients<a class="headerlink" href="#torrent-clients_1" title="Permanent link">&para;</a></h6>
+<p>qBittorrent, Deluge, ruTorrent</p>
+<p>The reason why we use <code>/data/torrents</code> for the torrent client is because it only needs access to the torrent files. In the torrent software settings, you’ll need to reconfigure paths and you can sort into sub-folders like <code>/data/torrents/{tv|movies|music}</code>.</p>
+<div class="highlight"><pre><span></span><code>data
+└── torrents
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<h6 id="usenet-clients_1">Usenet clients<a class="headerlink" href="#usenet-clients_1" title="Permanent link">&para;</a></h6>
+<p>NZBGet or SABnzbd</p>
+<p>The reason why we use <code>/data/usenet</code> for the usenet client is because it only needs access to the usenet files. In the usenet software settings, you’ll need to reconfigure paths and you can sort into sub-folders like <code>/data/usenet/{tv|movies|music}</code>.</p>
+<div class="highlight"><pre><span></span><code>data
+└── usenet
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<h6 id="the-arrs_1">The arr(s)<a class="headerlink" href="#the-arrs_1" title="Permanent link">&para;</a></h6>
+<p>Sonarr, Radarr and Lidarr</p>
+<p>Sonarr, Radarr and Lidarr gets access to everything because the download folder(s) and media folder will look like and be one file system. Hard links will work and moves will be atomic, instead of copy + delete.</p>
+<div class="highlight"><pre><span></span><code>data
+├── torrents
+│  ├── movies
+│  ├── music
+│  └── tv
+├── usenet
+│  ├── movies
+│  ├── music
+│  └── tv
+└── media
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<h6 id="media-server_1">Media Server<a class="headerlink" href="#media-server_1" title="Permanent link">&para;</a></h6>
+<p>Plex, Emby, JellyFin and Bazarr</p>
+<p>Plex, Emby, JellyFin and Bazarr only needs access to your media library, which can have any number of sub folders like Movies, Kids Movies, TV, Documentary TV and/or Music as sub folders.</p>
+<div class="highlight"><pre><span></span><code>data
+└── media
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+</details>
+<hr />
+<h5 id="appdata">Appdata<a class="headerlink" href="#appdata" title="Permanent link">&para;</a></h5>
+<p>Your appdata will be stored in <code>/volume1/docker/appdata/{appname}</code>
+These <code>{appname}</code> sub folders you need to create your self. (<em>This is a limitation of the Synology</em>)
+We're going to do this in Putty or a similar program.</p>
+<div class="highlight"><pre><span></span><code>sudo mkdir /volume1/docker/appdata
+<span class="nb">cd</span> /volume1/docker/appdata
+sudo mkdir radarr sonarr bazarr plex tautulli
+</code></pre></div>
+<p>So your appdata folder will look like this.</p>
+<div class="highlight"><pre><span></span><code>ls -al /volume1/docker/appdata
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>docker
+└── appdata
+   ├── radarr
+   ├── sonarr
+   ├── bazarr
+   ├── plex
+   └── tautulli
+</code></pre></div>
+<hr />
+<h5 id="needed-files">Needed files<a class="headerlink" href="#needed-files" title="Permanent link">&para;</a></h5>
+<p>First we will download the <code>docker-compose.yml</code> file</p>
+<p>Download this <a href="https://github.com/TRaSH-/Guides-Synology-Templates/blob/main/docker-compose/docker-compose.yml" rel="noopener noreferrer" target="_blank">docker-compose.yml</a> to your <code>/volume1/docker/appdata</code> location so you got your important stuff together.</p>
+<div class="highlight"><pre><span></span><code>sudo wget https://raw.githubusercontent.com/TRaSH-/Guides-Synology-Templates/main/docker-compose/docker-compose.yml
+</code></pre></div>
+<details class="question"><summary>What's included and What's not included</summary><p>This docker-compose file will have the following docker containers included.</p>
+<ul>
+<li>Radarr</li>
+<li>Sonarr</li>
+<li>Bazarr (Subtitle searcher and downloaded)</li>
+<li>Plex</li>
+<li>Tautulli</li>
+<li>Watchtower (automatic docker container updater at 4am)</li>
+</ul>
+<p>What's not included.</p>
+<p>I didn't add a downloader to it because it depends on what you prefer usenet/torrents and which client you prefer, so i created a new <a href="https://github.com/TRaSH-/Guides-Synology-Templates" rel="noopener noreferrer" target="_blank">Repository</a> on Github where I provide and maintain some templates that you can find in the <code>template</code> folder ready to use with the main <code>docker-compose.yml</code>.</p>
+<p>The only thing you need to do is copy/paste what's inside the <code>.yml</code> file in to the main <code>docker-compose.yml</code>, the template also has the command what you need to use to create the <a href="#appdata">appdata</a> folder that we explained earlier.</p>
+</details>
+<p>Second we will download the <code>.env</code> file</p>
+<p>Download this <a href="https://github.com/TRaSH-/Guides-Synology-Templates/blob/main/docker-compose/.env" rel="noopener noreferrer" target="_blank">.env</a> to your <code>/volume1/docker/appdata</code> location so you got your important stuff together.</p>
+<div class="highlight"><pre><span></span><code>sudo wget https://raw.githubusercontent.com/TRaSH-/Guides-Synology-Templates/main/docker-compose/.env
+</code></pre></div>
+<hr />
+<h5 id="changes-you-need-to-do">Changes you need to do<a class="headerlink" href="#changes-you-need-to-do" title="Permanent link">&para;</a></h5>
+<p>The <code>.env</code> we downloaded holds the variables/information you need to change so everything works (I added also a description in the <code>.env</code> file)</p>
+<ol>
+<li>DOCKERCONFDIR (only change this if you know what you're doing and decide to use another path then in this guide used)</li>
+<li>DOCKERDATADIR (only change this if you know what you're doing and decide to use another path then in this guide used)</li>
+<li>PUID/PGID (this info you got earlier from <a href="#puid-and-pgid">HERE</a>)</li>
+<li>TZ (Change to your timezone)</li>
+</ol>
+<p>It holds more variables/information for other containers but they are described in the <code>.env</code></p>
+<hr />
+<h5 id="permissions">Permissions<a class="headerlink" href="#permissions" title="Permanent link">&para;</a></h5>
+<p>Now we need to make sure that the newly created files and folders have the correct permissions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you're using another user then <code>admin</code> then you need to change it in the commands below !!!</p>
+</div>
+<div class="highlight"><pre><span></span><code>sudo chown -R admin:users /volume1/data /volume1/docker
+sudo chmod -R <span class="nv">a</span><span class="o">=</span>,a+rX,u+w,g+w /volume1/data /volume1/docker
+</code></pre></div>
+<hr />
+<h5 id="run-the-docker-compose">Run the Docker Compose<a class="headerlink" href="#run-the-docker-compose" title="Permanent link">&para;</a></h5>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>make sure you deleted/removed all your existing dockers from the GUI and also remove your native installs of these applications !!!</p>
+</div>
+<p>When you did all the above steps you only need to type the following in your <code>/volume1/docker/appdata</code></p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> /volume1/docker/appdata
+sudo docker-compose up -d
+</code></pre></div>
+<p>You will notice that all the images will be downloaded, and after that the containers will be started. If you get a error then look at the error what it says and try to fix it. If you still got issues then put your used docker-compose.yml on pastebin and join the guides-discord <a href="https://trash-guides.info/discord" rel="noopener noreferrer" target="_blank">here</a> and provide the pastebin link with the error, have patience because of timezone differences.</p>
+<hr />
+<p><strong>Don't forget to look at the <a href="#examples">Examples</a> how to setup the paths inside the containers.</strong></p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>If you need to do any changes only edit the <code>docker-compose.yml</code> file and activate the changes when you type <code>sudo docker-compose up -d</code> again.</p>
+<p>Any changes you do/did in the GUI will be reverted when you run the docker-compose.</p>
+<p>Just don't use the GUI !!!</p>
+</div>
+<details class="hint"><summary>docker-compose commands</summary><ul>
+<li><code>sudo docker-compose up -d</code> (This Docker-compose command helps builds the image, then creates and starts Docker containers. The containers are from the services specified in the compose file. If the containers are already running and you run docker-compose up, it recreates the container.)</li>
+<li><code>sudo docker-compose pull</code> (Pulls an image associated with a service defined in a docker-compose.yml)</li>
+<li><code>sudo docker-compose down</code> (The Docker-compose down command also stops Docker containers like the stop command does. But it goes the extra mile. Docker-compose down, doesn’t just stop the containers, it also removes them.)</li>
+<li><code>sudo docker system prune -a --volumes --force</code> (Remove all unused containers, networks, images (both dangling and unreferenced), and optionally, volumes.)</li>
+</ul>
+</details>
+</details>
+<details class="summary"><summary>Docker</summary><h4 id="docker">Docker<a class="headerlink" href="#docker" title="Permanent link">&para;</a></h4>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you're new to dockers and want a easy setup I suggest to take a look at <a href="https://dockstarter.com/" rel="noopener noreferrer" target="_blank">DockSTARTer</a>.
+I've also created a short guide <a href="#dockstarter">HERE</a> where I explain the settings for the most used applications.</p>
+<p>The main goal of DockSTARTer is to make it quick and easy to get up and running with Docker.
+You may choose to rely on DockSTARTer for various changes to your Docker system or use DockSTARTer as a stepping stone and learn to do more advanced configurations.</p>
+<p><em>DockSTARTer was actually my first steps in to the world of dockers.</em></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>I'm not going to explain how to get dockers installed and running, I will only explain which folder structure we recommend.</p>
+</div>
+<h5 id="folder-structure_3">Folder Structure<a class="headerlink" href="#folder-structure_3" title="Permanent link">&para;</a></h5>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>It doesn't really matter which path you use for your media and appdata,</p>
+<p>the only thing you should avoid is <code>/home</code>.</p>
+<p>Because user folders in <code>/home</code> are expected to have some restrictive permissions.</p>
+<p>It just could end up creating a permissions mess, so it's better to just avoid entirely.</p>
+</div>
+<p>For this example we're going to make use of a share called <code>data</code>.</p>
+<p>The <code>data</code> folder has sub-folders for <code>torrents</code> and <code>usenet</code> and each of these have sub-folders for <code>tv</code>, <code>movie</code> and <code>music</code> downloads to keep things neat. The <code>media</code> folder has nicely named <code>TV</code>, <code>Movies</code> and <code>Music</code> sub-folders, this is your library and what you’d pass to Plex, Emby or JellyFin.</p>
+<p><em>In this examples I'm using lower case on all folder on purpose, being Linux is case sensitive.</em></p>
+<div class="highlight"><pre><span></span><code>data
+├── torrents
+│  ├── movies
+│  ├── music
+│  └── tv
+├── usenet
+│  ├── movies
+│  ├── music
+│  └── tv
+└── media
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<details class="summary"><summary>Breakdown of the Folder Structure</summary><h5 id="breakdown-of-the-folder-structure_1">Breakdown of the Folder Structure<a class="headerlink" href="#breakdown-of-the-folder-structure_1" title="Permanent link">&para;</a></h5>
+<h6 id="torrent-clients_2">Torrent clients<a class="headerlink" href="#torrent-clients_2" title="Permanent link">&para;</a></h6>
+<p>qBittorrent, Deluge, ruTorrent</p>
+<p>The reason why we use <code>/data/torrents</code> for the torrent client is because it only needs access to the torrent files. In the torrent software settings, you’ll need to reconfigure paths and you can sort into sub-folders like <code>/data/torrents/{tv|movies|music}</code>.</p>
+<div class="highlight"><pre><span></span><code>data
+└── torrents
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<h6 id="usenet-clients_2">Usenet clients<a class="headerlink" href="#usenet-clients_2" title="Permanent link">&para;</a></h6>
+<p>NZBGet or SABnzbd</p>
+<p>The reason why we use <code>/data/usenet</code> for the usenet client is because it only needs access to the usenet files. In the usenet software settings, you’ll need to reconfigure paths and you can sort into sub-folders like <code>/data/usenet/{tv|movies|music}</code>.</p>
+<div class="highlight"><pre><span></span><code>data
+└── usenet
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<h6 id="the-arrs_2">The arr(s)<a class="headerlink" href="#the-arrs_2" title="Permanent link">&para;</a></h6>
+<p>Sonarr, Radarr and Lidarr</p>
+<p>Sonarr, Radarr and Lidarr gets access to everything because the download folder(s) and media folder will look like and be one file system. Hard links will work and moves will be atomic, instead of copy + delete.</p>
+<div class="highlight"><pre><span></span><code>data
+├── torrents
+│  ├── movies
+│  ├── music
+│  └── tv
+├── usenet
+│  ├── movies
+│  ├── music
+│  └── tv
+└── media
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<h6 id="media-server_2">Media Server<a class="headerlink" href="#media-server_2" title="Permanent link">&para;</a></h6>
+<p>Plex, Emby, JellyFin and Bazarr</p>
+<p>Plex, Emby, JellyFin and Bazarr only needs access to your media library, which can have any number of sub folders like Movies, Kids Movies, TV, Documentary TV and/or Music as sub folders.</p>
+<div class="highlight"><pre><span></span><code>data
+└── media
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+</details>
+<p><strong>Don't forget to look at the <a href="#examples">Examples</a> how to setup the paths inside the containers.</strong></p>
+</details>
+<details class="summary"><summary>Bare Metal (Native)</summary><h4 id="native">Native<a class="headerlink" href="#native" title="Permanent link">&para;</a></h4>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>I'm not going to explain how to install all the applications, I will only explain which folder structure we recommend.</p>
+</div>
+<hr />
+<h5 id="folder-structure_4">Folder Structure<a class="headerlink" href="#folder-structure_4" title="Permanent link">&para;</a></h5>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>It doesn't really matter which path you use for your media,</p>
+<p>the only thing you should  avoid is <code>/home</code>.</p>
+<p>Because user folders in <code>/home</code> are expected to have some restrictive permissions.</p>
+<p>It just could end up creating a permissions mess, so it's better to just avoid entirely.</p>
+</div>
+<p>For this example we're going to make use of a share called <code>data</code>.</p>
+<p>The <code>data</code> folder has sub-folders for <code>torrents</code> and <code>usenet</code> and each of these have sub-folders for <code>tv</code>, <code>movie</code> and <code>music</code> downloads to keep things neat. The <code>media</code> folder has nicely named <code>TV</code>, <code>Movies</code> and <code>Music</code> sub-folders, this is your library and what you’d pass to Plex, Emby or JellyFin.</p>
+<p><em>I'm using lower case on all folder on purpose, being Linux is case sensitive.</em></p>
+<div class="highlight"><pre><span></span><code>data
+├── torrents
+│  ├── movies
+│  ├── music
+│  └── tv
+├── usenet
+│  ├── movies
+│  ├── music
+│  └── tv
+└── media
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<details class="summary"><summary>Breakdown of the Folder Structure</summary><h5 id="breakdown-of-the-folder-structure_2">Breakdown of the Folder Structure<a class="headerlink" href="#breakdown-of-the-folder-structure_2" title="Permanent link">&para;</a></h5>
+<h6 id="torrent-clients_3">Torrent clients<a class="headerlink" href="#torrent-clients_3" title="Permanent link">&para;</a></h6>
+<p>qBittorrent, Deluge, ruTorrent</p>
+<p>The reason why we use <code>/data/torrents</code> for the torrent client is because it only needs access to the torrent files. In the torrent software settings, you’ll need to reconfigure paths and you can sort into sub-folders like <code>/data/torrents/{tv|movies|music}</code>.</p>
+<div class="highlight"><pre><span></span><code>data
+└── torrents
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<h6 id="usenet-clients_3">Usenet clients<a class="headerlink" href="#usenet-clients_3" title="Permanent link">&para;</a></h6>
+<p>NZBGet or SABnzbd</p>
+<p>The reason why we use <code>/data/usenet</code> for the usenet client is because it only needs access to the usenet files. In the usenet software settings, you’ll need to reconfigure paths and you can sort into sub-folders like <code>/data/usenet/{tv|movies|music}</code>.</p>
+<div class="highlight"><pre><span></span><code>data
+└── usenet
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<h6 id="the-arrs_3">The arr(s)<a class="headerlink" href="#the-arrs_3" title="Permanent link">&para;</a></h6>
+<p>Sonarr, Radarr and Lidarr</p>
+<p>Sonarr, Radarr and Lidarr gets access to everything because the download folder(s) and media folder will look like and be one file system. Hard links will work and moves will be atomic, instead of copy + delete.</p>
+<div class="highlight"><pre><span></span><code>data
+├── torrents
+│  ├── movies
+│  ├── music
+│  └── tv
+├── usenet
+│  ├── movies
+│  ├── music
+│  └── tv
+└── media
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+<h6 id="media-server_3">Media Server<a class="headerlink" href="#media-server_3" title="Permanent link">&para;</a></h6>
+<p>Plex, Emby, JellyFin and Bazarr</p>
+<p>Plex, Emby, JellyFin and Bazarr only needs access to your media library, which can have any number of sub folders like Movies, Kids Movies, TV, Documentary TV and/or Music as sub folders.</p>
+<div class="highlight"><pre><span></span><code>data
+└── media
+   ├── movies
+   ├── music
+   └── tv
+</code></pre></div>
+</details>
+<hr />
+<h5 id="permissions_1">Permissions<a class="headerlink" href="#permissions_1" title="Permanent link">&para;</a></h5>
+<p>Recursively chown user and group and Recursively chmod to 775/664</p>
+<div class="highlight"><pre><span></span><code>sudo chown -R <span class="nv">$USER</span>:<span class="nv">$USER</span> /data
+sudo chmod -R <span class="nv">a</span><span class="o">=</span>,a+rX,u+w,g+w /data
+</code></pre></div>
+<p><strong>Don't forget to look at the <a href="#examples">Examples</a> how to setup the paths inside the containers.</strong></p>
+</details>
+<hr />
+<h3 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h3>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Pick one path layout and use it for all of them.</p>
+<p>It doesn't matter if you prefer to use <code>/data</code>, <code>/shared</code>, <code>/storage</code> or whatever.</p>
+<p>The screenshots in the examples are using the following root path <code>/data</code></p>
+</div>
+<ul>
+<li><a href="#sonarr">Sonarr</a></li>
+<li><a href="#radarr">Radarr</a></li>
+<li><a href="#sabnzbd">SABnzbd</a></li>
+<li><a href="#nzbget">NZBGet</a></li>
+<li><a href="#qbittorent">qBittorrent</a></li>
+<li><a href="#deluge">Deluge</a></li>
+<li><a href="#rutorrent">ruTorrent</a></li>
+</ul>
+<details class="example"><summary>Sonarr Examples</summary><h4 id="sonarr_1">Sonarr<a class="headerlink" href="#sonarr_1" title="Permanent link">&para;</a></h4>
+<p><code>Settings</code> =&gt; <code>Media Management</code> =&gt; <code>Importing</code></p>
+<p><img alt="sonarr-enable-hardlinks" src="../images/sonarr-enable-hardlinks.png" /></p>
+<p><code>Settings</code> =&gt; <code>Media Management</code> =&gt; <code>Root Folders</code></p>
+<p><img alt="sonarr-root-folder" src="../images/sonarr-root-folder.png" /></p>
+<p><code>Series</code> =&gt; <code>Add New</code></p>
+<p><img alt="sonarr-add-new" src="../images/sonarr-add-new.png" /></p>
+<p><img alt="sonarr-tv" src="../images/sonarr-tv.png" /></p>
+</details>
+<details class="example"><summary>Radarr Examples</summary><h4 id="radarr_1">Radarr<a class="headerlink" href="#radarr_1" title="Permanent link">&para;</a></h4>
+<p><code>Settings</code> =&gt; <code>Media Management</code> =&gt; <code>Importing</code></p>
+<p><img alt="radarr-enable-hardlinks" src="../images/radarr-enable-hardlinks.png" /></p>
+<p><code>Settings</code> =&gt; <code>Media Management</code> =&gt; <code>Root Folders</code></p>
+<p><img alt="radarr-root-folder" src="../images/radarr-root-folder.png" /></p>
+<p><code>Movies</code> =&gt; <code>Add New</code></p>
+<p><img alt="radarr-add-new" src="../images/radarr-add-new.png" /></p>
+<p><img alt="radarr-movies" src="../images/radarr-movies.png" /></p>
+</details>
+<details class="example"><summary>SABnzbd Examples</summary><h4 id="sabnzbd_1">SABnzbd<a class="headerlink" href="#sabnzbd_1" title="Permanent link">&para;</a></h4>
+<p><code>SABnzbd config</code> =&gt; <code>Folders</code></p>
+<p><img alt="sabnzbd-folders" src="../images/sabnzbd-folders.png" /></p>
+<p><code>SABnzbd config</code> =&gt; <code>Categories</code></p>
+<p><img alt="sabnzbd-categories" src="../images/sabnzbd-categories.png" /></p>
+</details>
+<details class="example"><summary>NZBGet Examples</summary><h4 id="nzbget_1">NZBGet<a class="headerlink" href="#nzbget_1" title="Permanent link">&para;</a></h4>
+<p><code>Settings</code> =&gt; <code>PATHS</code></p>
+<p><img alt="nzbget-settings-paths" src="../images/nzbget-settings-paths.png" /></p>
+<p><code>Settings</code> =&gt; <code>CATEGORIES</code></p>
+<p><img alt="nzbget-settings-categories" src="../images/nzbget-settings-categories.png" /></p>
+</details>
+<details class="example"><summary>qBittorrent Examples</summary><h4 id="qbittorrent_1">qBittorrent<a class="headerlink" href="#qbittorrent_1" title="Permanent link">&para;</a></h4>
+<p><code>Options</code> =&gt; <code>Downloads</code></p>
+<p><img alt="qbt-options-downloads" src="../images/qbt-options-downloads.png" /></p>
+</details>
+<details class="example"><summary>Deluge Example</summary><h4 id="deluge_1">Deluge<a class="headerlink" href="#deluge_1" title="Permanent link">&para;</a></h4>
+<p><code>Preferences</code> =&gt; <code>Downloads</code></p>
+<p><img alt="deluge-preferences-downloads" src="../images/deluge-preferences-downloads.png" /></p>
+</details>
+<details class="example"><summary>ruTorrent Examples</summary><h4 id="rutorrent_1">ruTorrent<a class="headerlink" href="#rutorrent_1" title="Permanent link">&para;</a></h4>
+<p><code>../config/rtorrent/config/rtorrent.rc</code> (path to your appdata)</p>
+<p><img alt="rtorrent.rc" src="../images/rtorrent.rc.png" /></p>
+<p><code>Settings</code> =&gt; <code>Downloads</code></p>
+<p><img alt="rtorrent-settings-downloads" src="../images/rtorrent-settings-downloads.png" /></p>
+<p><code>Settings</code> =&gt; <code>Autotools</code></p>
+<p><img alt="rtorrent-settings-autotools" src="../images/rtorrent-settings-autotools.png" /></p>
+</details>
+<hr />
+<p>Big Thnx to <a href="https://github.com/fryfrog" rel="noopener noreferrer" target="_blank">fryfrog</a> for his <a href="https://wiki.servarr.com/Docker_Guide" rel="noopener noreferrer" target="_blank">Docker Guide</a> that I used as basis for this guide.</p>
+                
+                  
+                    
+
+<hr>
+<div class="md-source-date">
+  <small>
+    
+      Last update: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2021-03-14T14:43:04+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2021-03-14</span>
+    
+  </small>
+</div>
+                  
+                
+              
+    <footer class="sponsorship">
+        <hr>
+        <a href="https://github.com/sponsors/TRaSH-" title="Buy me a Coffee"><img src="/img/buy-me-a-coffee.png" alt="Buy me a coffee" width="137" height="39">
+        </a>
+        <hr>
+    </footer>
+
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        <a href="../how-to-provide-a-docker-compose/" class="md-footer__link md-footer__link--prev" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              How to provide a docker compose
+            </div>
+          </div>
+        </a>
+      
+      
+        <a href="../How-to-setup-Torguard-for-port-forwarding/" class="md-footer__link md-footer__link--next" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Setup TorGuard for port forwarding
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2020 TRaSH
+          </div>
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+  <div class="md-footer-social">
+    
+      
+      
+        
+        
+      
+      <a href="https://trash-guides.info/discord" target="_blank" rel="noopener" title="trash-guides.info" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M297.216 243.2c0 15.616-11.52 28.416-26.112 28.416-14.336 0-26.112-12.8-26.112-28.416s11.52-28.416 26.112-28.416c14.592 0 26.112 12.8 26.112 28.416zm-119.552-28.416c-14.592 0-26.112 12.8-26.112 28.416s11.776 28.416 26.112 28.416c14.592 0 26.112-12.8 26.112-28.416.256-15.616-11.52-28.416-26.112-28.416zM448 52.736V512c-64.494-56.994-43.868-38.128-118.784-107.776l13.568 47.36H52.48C23.552 451.584 0 428.032 0 398.848V52.736C0 23.552 23.552 0 52.48 0h343.04C424.448 0 448 23.552 448 52.736zm-72.96 242.688c0-82.432-36.864-149.248-36.864-149.248-36.864-27.648-71.936-26.88-71.936-26.88l-3.584 4.096c43.52 13.312 63.744 32.512 63.744 32.512-60.811-33.329-132.244-33.335-191.232-7.424-9.472 4.352-15.104 7.424-15.104 7.424s21.248-20.224 67.328-33.536l-2.56-3.072s-35.072-.768-71.936 26.88c0 0-36.864 66.816-36.864 149.248 0 0 21.504 37.12 78.08 38.912 0 0 9.472-11.52 17.152-21.248-32.512-9.728-44.8-30.208-44.8-30.208 3.766 2.636 9.976 6.053 10.496 6.4 43.21 24.198 104.588 32.126 159.744 8.96 8.96-3.328 18.944-8.192 29.44-15.104 0 0-12.8 20.992-46.336 30.464 7.68 9.728 16.896 20.736 16.896 20.736 56.576-1.792 78.336-38.912 78.336-38.912z"/></svg>
+      </a>
+    
+      
+      
+        
+        
+      
+      <a href="https://github.com/TRaSH-/Guides" target="_blank" rel="noopener" title="github.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zM277.3 415.7c-8.4 1.5-11.5-3.7-11.5-8 0-5.4.2-33 .2-55.3 0-15.6-5.2-25.5-11.3-30.7 37-4.1 76-9.2 76-73.1 0-18.2-6.5-27.3-17.1-39 1.7-4.3 7.4-22-1.7-45-13.9-4.3-45.7 17.9-45.7 17.9-13.2-3.7-27.5-5.6-41.6-5.6-14.1 0-28.4 1.9-41.6 5.6 0 0-31.8-22.2-45.7-17.9-9.1 22.9-3.5 40.6-1.7 45-10.6 11.7-15.6 20.8-15.6 39 0 63.6 37.3 69 74.3 73.1-4.8 4.3-9.1 11.7-10.6 22.3-9.5 4.3-33.8 11.7-48.3-13.9-9.1-15.8-25.5-17.1-25.5-17.1-16.2-.2-1.1 10.2-1.1 10.2 10.8 5 18.4 24.2 18.4 24.2 9.7 29.7 56.1 19.7 56.1 19.7 0 13.9.2 36.5.2 40.6 0 4.3-3 9.5-11.5 8-66-22.1-112.2-84.9-112.2-158.3 0-91.8 70.2-161.5 162-161.5S388 165.6 388 257.4c.1 73.4-44.7 136.3-110.7 158.3zm-98.1-61.1c-1.9.4-3.7-.4-3.9-1.7-.2-1.5 1.1-2.8 3-3.2 1.9-.2 3.7.6 3.9 1.9.3 1.3-1 2.6-3 3zm-9.5-.9c0 1.3-1.5 2.4-3.5 2.4-2.2.2-3.7-.9-3.7-2.4 0-1.3 1.5-2.4 3.5-2.4 1.9-.2 3.7.9 3.7 2.4zm-13.7-1.1c-.4 1.3-2.4 1.9-4.1 1.3-1.9-.4-3.2-1.9-2.8-3.2.4-1.3 2.4-1.9 4.1-1.5 2 .6 3.3 2.1 2.8 3.4zm-12.3-5.4c-.9 1.1-2.8.9-4.3-.6-1.5-1.3-1.9-3.2-.9-4.1.9-1.1 2.8-.9 4.3.6 1.3 1.3 1.8 3.3.9 4.1zm-9.1-9.1c-.9.6-2.6 0-3.7-1.5s-1.1-3.2 0-3.9c1.1-.9 2.8-.2 3.7 1.3 1.1 1.5 1.1 3.3 0 4.1zm-6.5-9.7c-.9.9-2.4.4-3.5-.6-1.1-1.3-1.3-2.8-.4-3.5.9-.9 2.4-.4 3.5.6 1.1 1.3 1.3 2.8.4 3.5zm-6.7-7.4c-.4.9-1.7 1.1-2.8.4-1.3-.6-1.9-1.7-1.5-2.6.4-.6 1.5-.9 2.8-.4 1.3.7 1.9 1.8 1.5 2.6z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tabs", "navigation.expand"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fb4a9340.min.js", "version": null}</script>
+    
+    
+    
+      <script src="../../assets/javascripts/bundle.a1c7c35e.min.js"></script>
+      
+        <script src="../../js/timeago.min.js"></script>
+      
+        <script src="../../js/timeago_mkdocs_material.js"></script>
+      
+        <script src="../../javascripts/extra.js"></script>
+      
+    
+    <script>
+    var elements = document.getElementsByClassName("lightgallery");
+    for(var i=0; i<elements.length; i++) {
+        lightGallery(elements[i]);
+    }
+    </script>
+
+  </body>
+</html>
